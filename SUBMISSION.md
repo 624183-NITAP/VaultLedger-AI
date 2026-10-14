@@ -47,27 +47,27 @@ VaultLedger AI features a dark glassmorphic interface with an emerald security a
 ### 1. Real-Time Air-Gapped Dashboard & KPIs
 Displays real-time connection status to local Ollama (`llama3.2:latest`), Gross Invoiced Revenue, Total Business Expenses, IRS Deductible Write-Offs, and Estimated Self-Employment Tax Savings (at 30%).
 
-![VaultLedger AI Dashboard](https://raw.githubusercontent.com/saira-s/vaultledger-ai/main/screenshots/vaultledger_home.png)
+![VaultLedger AI Dashboard](https://raw.githubusercontent.com/624183-NITAP/VaultLedger-AI/main/screenshots/vaultledger_home.png)
 
 ### 2. Smart Ingest & Local AI Extractor
 Load instant realistic presets (AWS Cloud hosting, Client Design Deliverable, Client Lunch, 1099 Subcontractor) or drop any receipt/invoice. Llama 3.2 processes the text locally, determines tax deductibility, and generates an IRS Schedule C rationale.
 
-![Smart Ingest & AI Extractor](https://raw.githubusercontent.com/saira-s/vaultledger-ai/main/screenshots/vaultledger_extracted.png)
+![Smart Ingest & AI Extractor](https://raw.githubusercontent.com/624183-NITAP/VaultLedger-AI/main/screenshots/vaultledger_extracted.png)
 
 ### 3. Audited Ledger & Instant CSV Export
 Search and filter across all processed transactions. One-click export generates an RFC 4180-compliant IRS Schedule C CSV mapped directly to lines 11, 13, 18, and 24b.
 
-![Audited Financial Ledger](https://raw.githubusercontent.com/saira-s/vaultledger-ai/main/screenshots/vaultledger_ledger.png)
+![Audited Financial Ledger](https://raw.githubusercontent.com/624183-NITAP/VaultLedger-AI/main/screenshots/vaultledger_ledger.png)
 
 ### 4. AI Payment Chaser Modal
 Select any overdue client invoice (e.g., 13 days past Net-15) and toggle between **Gentle Reminder**, **Professional Follow-up**, or **Firm Final Notice**. Local Llama 3.2 writes an airtight email customized to the client and amount due.
 
-![AI Payment Chaser](https://raw.githubusercontent.com/saira-s/vaultledger-ai/main/screenshots/vaultledger_chaser.png)
+![AI Payment Chaser](https://raw.githubusercontent.com/624183-NITAP/VaultLedger-AI/main/screenshots/vaultledger_chaser.png)
 
 ### 5. Interactive Open-Source ROI Calculator
 An interactive slider that demonstrates how much money a freelancer saves by switching from closed cloud APIs and monthly SaaS platforms to local open-weights.
 
-![Freelance Annual Savings Calculator](https://raw.githubusercontent.com/saira-s/vaultledger-ai/main/screenshots/vaultledger_calculator.png)
+![Freelance Annual Savings Calculator](https://raw.githubusercontent.com/624183-NITAP/VaultLedger-AI/main/screenshots/vaultledger_calculator.png)
 
 ---
 
@@ -253,4 +253,4 @@ To test whether real freelancers would actually use and pay for VaultLedger AI, 
 
 ---
 
-*Thank you for checking out VaultLedger AI! Check out the [GitHub repository](https://github.com/saira-s/vaultledger-ai) to run it locally on your own machine.*
+*Thank you for checking out VaultLedger AI! Check out the [GitHub repository](https://github.com/624183-NITAP/VaultLedger-AI) to run it locally on your own machine.*

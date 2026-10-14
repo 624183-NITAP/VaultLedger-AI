@@ -3,7 +3,7 @@
 > **Built for the Hacktoberfest Open-Source AI Challenge (Week 2: Side Hustle)**  
 > *Theme: Build something with open-weight models or open-source AI that someone would actually pay for.*
 
-![VaultLedger AI](public/assets/preview.png)
+![VaultLedger AI](screenshots/vaultledger_home.png)
 
 ---
 
@@ -99,8 +99,8 @@ Freelancers and solo contractors face two massive pain points:
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/your-username/vaultledger-ai.git
-cd vaultledger-ai
+git clone https://github.com/624183-NITAP/VaultLedger-AI.git
+cd VaultLedger-AI
 
 # 2. Install dependencies
 npm install
