@@ -1,0 +1,192 @@
+[
+  {
+    "vendor_or_client": "AMAZON WEB SERVICES LLC",
+    "document_type": "invoice",
+    "direction": "income",
+    "invoice_number": "INV-4290",
+    "date": "2024-10-11",
+    "due_date": null,
+    "currency": "$",
+    "subtotal": 18.87,
+    "tax": 228.7,
+    "total": 247.57,
+    "category": "Software & Cloud",
+    "status": "Deductible",
+    "is_tax_deductible": true,
+    "deductibility_percentage": 100,
+    "tax_rationale": "Essential software/cloud infrastructure for digital freelance operations.",
+    "line_items": [
+      {
+        "description": "AMAZON WEB SERVICES LLC services or goods",
+        "amount": 247.57
+      }
+    ],
+    "inference_ms": 40008,
+    "parsed_with": "deterministic-fallback",
+    "id": "rec_mv7fxcjidz2h"
+  },
+  {
+    "id": "rec_001",
+    "document_type": "invoice",
+    "direction": "income",
+    "vendor_or_client": "Starlight Studios LLC",
+    "invoice_number": "INV-2024-104",
+    "date": "2024-10-01",
+    "due_date": "2024-10-31",
+    "currency": "$",
+    "subtotal": 4200,
+    "tax": 0,
+    "total": 4200,
+    "category": "Client Invoicing",
+    "status": "Paid",
+    "is_tax_deductible": false,
+    "deductibility_percentage": 0,
+    "tax_rationale": "Gross freelance revenue from UI/UX design & design system deliverables.",
+    "line_items": [
+      {
+        "description": "Design System Architecture (40 hrs @ $85/hr)",
+        "amount": 3400
+      },
+      {
+        "description": "Interactive Figma Prototyping & Handoff",
+        "amount": 800
+      }
+    ],
+    "parsed_with": "llama3.2:latest",
+    "inference_ms": 1120
+  },
+  {
+    "id": "rec_002",
+    "document_type": "receipt",
+    "direction": "expense",
+    "vendor_or_client": "Amazon Web Services (AWS)",
+    "invoice_number": "AWS-8829103",
+    "date": "2024-10-03",
+    "due_date": "2024-10-03",
+    "currency": "$",
+    "subtotal": 142.5,
+    "tax": 11.75,
+    "total": 154.25,
+    "category": "Software & Cloud",
+    "status": "Deductible",
+    "is_tax_deductible": true,
+    "deductibility_percentage": 100,
+    "tax_rationale": "Direct cloud infrastructure expense necessary for client application hosting and staging (Schedule C Line 18).",
+    "line_items": [
+      {
+        "description": "AWS EC2 c6g.xlarge staging server",
+        "amount": 96
+      },
+      {
+        "description": "S3 Cloud Storage & CloudFront Egress",
+        "amount": 46.5
+      }
+    ],
+    "parsed_with": "llama3.2:latest",
+    "inference_ms": 890
+  },
+  {
+    "id": "rec_003",
+    "document_type": "receipt",
+    "direction": "expense",
+    "vendor_or_client": "Apple Store Fifth Ave",
+    "invoice_number": "APL-902184",
+    "date": "2024-10-05",
+    "due_date": "2024-10-05",
+    "currency": "$",
+    "subtotal": 1999,
+    "tax": 177.41,
+    "total": 2176.41,
+    "category": "Equipment & Hardware",
+    "status": "Deductible",
+    "is_tax_deductible": true,
+    "deductibility_percentage": 100,
+    "tax_rationale": "Qualifies for Section 179 immediate full expense deduction as essential professional computing equipment.",
+    "line_items": [
+      {
+        "description": "MacBook Pro 14-inch M3 Pro (18GB, 512GB)",
+        "amount": 1999
+      }
+    ],
+    "parsed_with": "llama3.2:latest",
+    "inference_ms": 1250
+  },
+  {
+    "id": "rec_004",
+    "document_type": "receipt",
+    "direction": "expense",
+    "vendor_or_client": "Bistro Verde Client Lunch",
+    "invoice_number": "CHK-4491",
+    "date": "2024-10-08",
+    "due_date": "2024-10-08",
+    "currency": "$",
+    "subtotal": 124,
+    "tax": 10.54,
+    "total": 134.54,
+    "category": "Meals & Entertainment",
+    "status": "Deductible",
+    "is_tax_deductible": true,
+    "deductibility_percentage": 50,
+    "tax_rationale": "Business meal with prospective client discussing Q4 retainer. Under IRS rules, business meals are 50% deductible.",
+    "line_items": [
+      {
+        "description": "2x Executive Prix Fixe Lunch & Coffee",
+        "amount": 124
+      }
+    ],
+    "parsed_with": "llama3.2:latest",
+    "inference_ms": 940
+  },
+  {
+    "id": "rec_005",
+    "document_type": "bill",
+    "direction": "expense",
+    "vendor_or_client": "Alex Rivera (Motion Designer)",
+    "invoice_number": "AR-2024-03",
+    "date": "2024-10-10",
+    "due_date": "2024-10-24",
+    "currency": "$",
+    "subtotal": 1200,
+    "tax": 0,
+    "total": 1200,
+    "category": "Subcontractors",
+    "status": "Deductible",
+    "is_tax_deductible": true,
+    "deductibility_percentage": 100,
+    "tax_rationale": "1099 contractor expense directly related to client deliverable animation. 100% tax deductible on Schedule C Line 11.",
+    "line_items": [
+      {
+        "description": "Lottie animations for onboarding screen flow",
+        "amount": 1200
+      }
+    ],
+    "parsed_with": "llama3.2:latest",
+    "inference_ms": 1050
+  },
+  {
+    "id": "rec_006",
+    "document_type": "invoice",
+    "direction": "income",
+    "vendor_or_client": "Apex Fintech Labs",
+    "invoice_number": "INV-2024-105",
+    "date": "2024-09-15",
+    "due_date": "2024-10-01",
+    "currency": "$",
+    "subtotal": 3850,
+    "tax": 0,
+    "total": 3850,
+    "category": "Client Invoicing",
+    "status": "Overdue",
+    "is_tax_deductible": false,
+    "deductibility_percentage": 0,
+    "tax_rationale": "Billed revenue currently 13 days past Net-15 term. Needs payment follow-up email.",
+    "line_items": [
+      {
+        "description": "Fintech Dashboard Redesign & React Component Kit",
+        "amount": 3850
+      }
+    ],
+    "parsed_with": "llama3.2:latest",
+    "inference_ms": 1180
+  }
+]

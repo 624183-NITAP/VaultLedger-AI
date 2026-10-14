@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VaultLedger AI — The 100% Local, Air-Gapped Freelance Financial & Invoice Intelligence OS</title>
+  <meta name="description" content="Never send client invoices or confidential receipts to the cloud. Unlimited invoice sorting, tax deduction tracking, and audit prep powered by open-weight Llama 3.2 running locally on your laptop.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Top App Navigation Bar -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-wrapper">
+        <div class="brand-icon">🛡️</div>
+        <div>
+          <div class="brand-title">
+            VaultLedger AI
+            <span class="badge-tag">Zero Cloud Leak</span>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 1px;">
+            Local Open-Weight Financial Intelligence OS
+          </div>
+        </div>
+      </div>
+
+      <div class="header-center">
+        <div class="status-pill" id="ollamaStatusPill" title="Local Model Status">
+          <div class="status-dot" id="statusDot"></div>
+          <span id="modelStatusText">Connecting to Llama 3.2...</span>
+        </div>
+        <div class="status-pill" style="display: none;" id="airgapBadge">
+          <span>🔒 Air-Gapped (Offline Safe)</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <select id="currencySelector" class="select-input" aria-label="Select Currency">
+          <option value="$" selected>USD ($)</option>
+          <option value="€">EUR (€)</option>
+          <option value="£">GBP (£)</option>
+          <option value="₹">INR (₹)</option>
+          <option value="CA$">CAD (CA$)</option>
+        </select>
+        <button id="btnResetSamples" class="btn btn-secondary" title="Reset sample freelance ledger">
+          🔄 Reset Samples
+        </button>
+        <button id="btnExportCSV" class="btn btn-outline-emerald" title="Export Schedule C Tax CSV">
+          📥 Export Tax CSV
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="main-wrapper">
+
+    <!-- KPI Metric Summary Cards -->
+    <section class="metrics-grid" aria-label="Financial Summary Cards">
+      <div class="glass-panel metric-card">
+        <div class="metric-header">
+          <span class="metric-title">Gross Invoiced (Revenue)</span>
+          <div class="metric-icon-box" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">💵</div>
+        </div>
+        <div class="metric-value" id="kpiGrossRevenue">$0.00</div>
+        <div class="metric-sub">
+          <span style="color: #34d399;">●</span>
+          <span id="kpiIncomeCount">0 client invoices</span>
+        </div>
+      </div>
+
+      <div class="glass-panel metric-card">
+        <div class="metric-header">
+          <span class="metric-title">Total Business Expenses</span>
+          <div class="metric-icon-box" style="background: rgba(244, 63, 94, 0.15); color: #fb7185;">🧾</div>
+        </div>
+        <div class="metric-value" id="kpiTotalExpense">$0.00</div>
+        <div class="metric-sub">
+          <span style="color: #fb7185;">●</span>
+          <span id="kpiExpenseCount">0 receipts parsed</span>
+        </div>
+      </div>
+
+      <div class="glass-panel metric-card">
+        <div class="metric-header">
+          <span class="metric-title">IRS Deductible Write-offs</span>
+          <div class="metric-icon-box" style="background: rgba(6, 182, 212, 0.15); color: #38bdf8;">📊</div>
+        </div>
+        <div class="metric-value" id="kpiDeductibleSum">$0.00</div>
+        <div class="metric-sub">
+          <span style="color: #38bdf8;">●</span>
+          <span>Schedule C eligible</span>
+        </div>
+      </div>
+
+      <div class="glass-panel metric-card">
+        <div class="metric-header">
+          <span class="metric-title">Est. Tax Savings (at 30%)</span>
+          <div class="metric-icon-box" style="background: rgba(139, 92, 246, 0.15); color: #a78bfa;">💰</div>
+        </div>
+        <div class="metric-value" id="kpiTaxSavings" style="color: #a7f3d0;">$0.00</div>
+        <div class="metric-sub">
+          <span style="color: #a78bfa;">●</span>
+          <span>Self-employment savings</span>
+        </div>
+      </div>
+
+      <div class="glass-panel metric-card">
+        <div class="metric-header">
+          <span class="metric-title">Pending & Overdue Invoices</span>
+          <div class="metric-icon-box" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">⚠️</div>
+        </div>
+        <div class="metric-value" id="kpiOverdueSum" style="color: #fde047;">$0.00</div>
+        <div class="metric-sub">
+          <span style="color: #fbbf24;">●</span>
+          <span id="kpiOverdueCount">0 awaiting payment</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <nav class="tabs-nav" aria-label="Main Navigation">
+      <button class="tab-btn active" data-tab="tabIngest" id="tabNavIngest">
+        <span>⚡</span> Smart Ingest & AI Extractor
+      </button>
+      <button class="tab-btn" data-tab="tabLedger" id="tabNavLedger">
+        <span>📋</span> Audited Ledger & Tax Schedule <span class="tab-counter" id="ledgerCountPill">0</span>
+      </button>
+      <button class="tab-btn" data-tab="tabChaser" id="tabNavChaser">
+        <span>🧾</span> Client Invoices & AI Payment Chaser <span class="tab-counter" id="chaserCountPill" style="background: rgba(244, 63, 94, 0.2); color: #fda4af;">1</span>
+      </button>
+      <button class="tab-btn" data-tab="tabTaxAudit" id="tabNavTaxAudit">
+        <span>⚖️</span> AI Tax Consultant & Audit Shield
+      </button>
+      <button class="tab-btn" data-tab="tabOpenSource" id="tabNavOpenSource">
+        <span>🚀</span> Why Open-Source AI Matters
+      </button>
+    </nav>
+
+    <!-- TAB 1: Smart Ingest & AI Extractor -->
+    <div class="tab-content active" id="tabIngest">
+      <div class="ingest-grid">
+        
+        <!-- Left Column: Ingestion Controls -->
+        <div class="glass-panel ingest-box">
+          <div class="section-head">
+            <div>
+              <h2 class="section-title">Ingest Financial Document</h2>
+              <p class="section-desc">Drop an invoice or receipt image/text. Processed 100% on your laptop.</p>
+            </div>
+            <span class="status-pill" style="font-size: 0.72rem; padding: 0.25rem 0.6rem;">
+              Local Model: <strong id="currentModelLabel" style="color: #34d399; margin-left: 3px;">llama3.2</strong>
+            </span>
+          </div>
+
+          <!-- Presets -->
+          <div>
+            <div class="presets-label">⚡ Instant Test Presets (Click to load)</div>
+            <div class="preset-chips">
+              <button class="preset-chip" id="presetAWS" data-preset="aws">
+                <span>🖥️</span> AWS GPU Cloud Hosting
+              </button>
+              <button class="preset-chip" id="presetDesign" data-preset="design">
+                <span>🎨</span> Client Design System Net-30
+              </button>
+              <button class="preset-chip" id="presetLunch" data-preset="lunch">
+                <span>🍽️</span> Client Retainer Lunch (50%)
+              </button>
+              <button class="preset-chip" id="presetContractor" data-preset="contractor">
+                <span>🎬</span> 1099 Subcontractor Animator
+              </button>
+              <button class="preset-chip" id="presetHardware" data-preset="hardware">
+                <span>💻</span> Apple M3 Max Studio (Sec 179)
+              </button>
+            </div>
+          </div>
+
+          <!-- Drag and Drop Dropzone -->
+          <div class="dropzone" id="fileDropzone">
+            <div class="dropzone-icon">📥</div>
+            <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 0.35rem;">
+              Drag & Drop Invoice or Receipt
+            </div>
+            <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.8rem;">
+              Supports .txt, .pdf text, .csv, receipts, bank exports or raw strings
+            </div>
+            <input type="file" id="fileInput" style="display: none;" accept=".txt,.json,.csv,.pdf,.png,.jpg,.jpeg">
+            <button class="btn btn-secondary" type="button" id="btnBrowseFile" style="font-size: 0.8rem; padding: 0.4rem 0.9rem;">
+              Browse Local File
+            </button>
+          </div>
+
+          <!-- Raw Text Box -->
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+              <label for="rawDocText" style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">
+                Or Paste Raw Document Content:
+              </label>
+              <button id="btnClearText" class="btn btn-secondary" style="font-size: 0.725rem; padding: 0.2rem 0.6rem;">
+                Clear
+              </button>
+            </div>
+            <textarea id="rawDocText" class="doc-textarea" placeholder="Paste invoice text, scanned OCR lines, payment confirmation, or receipt items here..."></textarea>
+          </div>
+
+          <!-- Action Button -->
+          <div style="display: flex; gap: 0.75rem;">
+            <button id="btnParseDoc" class="btn btn-primary" style="flex: 1; padding: 0.75rem;">
+              <span id="parseBtnIcon">✨</span>
+              <span id="parseBtnText">Extract with Local Llama 3.2</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Column: Extracted Result Card -->
+        <div class="glass-panel result-card" id="resultCardContainer">
+          
+          <!-- Placeholder State -->
+          <div class="result-placeholder" id="resultPlaceholder">
+            <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.6;">⚡</div>
+            <h3 style="font-size: 1.15rem; color: var(--text-main); margin-bottom: 0.5rem;">No Document Processed Yet</h3>
+            <p style="font-size: 0.85rem; max-width: 340px;">
+              Pick one of the instant presets above or drop a receipt to see local Llama 3.2 extract structured financial and tax write-off details in real time.
+            </p>
+          </div>
+
+          <!-- Parsed Content State (Hidden until parsed) -->
+          <div id="parsedContentBox" style="display: none; flex-direction: column; gap: 1.25rem;">
+            <div class="result-header">
+              <div>
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                  <h3 id="resVendor" style="font-size: 1.3rem;">Vendor / Client</h3>
+                  <span id="resDirectionBadge" class="doc-badge-pill badge-expense">Expense</span>
+                </div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);" id="resDocSub">
+                  Document: Receipt • Invoice #: INV-000
+                </div>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Total Amount</div>
+                <div id="resTotal" style="font-family: 'Outfit'; font-size: 1.7rem; font-weight: 700; color: #34d399;">$0.00</div>
+              </div>
+            </div>
+
+            <!-- Tax Rationale Box -->
+            <div class="tax-rationale-box">
+              <div class="tax-rationale-title">
+                <span>🛡️</span>
+                <span>IRS Schedule C Deductibility: <strong id="resDeductibleBadge">100% Eligible</strong></span>
+              </div>
+              <p class="tax-rationale-text" id="resTaxRationale">
+                Detailed tax rationale will be generated by the model here.
+              </p>
+            </div>
+
+            <!-- Meta details grid -->
+            <div class="result-grid">
+              <div class="detail-box">
+                <label>Category</label>
+                <div class="val" id="resCategory">Software & Cloud</div>
+              </div>
+              <div class="detail-box">
+                <label>Issue Date</label>
+                <div class="val" id="resDate">2024-10-14</div>
+              </div>
+              <div class="detail-box">
+                <label>Subtotal / Tax</label>
+                <div class="val" id="resSubtotalTax">$0.00 / $0.00</div>
+              </div>
+              <div class="detail-box">
+                <label>Due Date / Terms</label>
+                <div class="val" id="resDueDate">Net-30</div>
+              </div>
+            </div>
+
+            <!-- Line items -->
+            <div>
+              <div style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.5rem;">
+                Itemized Line Items
+              </div>
+              <div style="background: rgba(0,0,0,0.25); border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); overflow: hidden;">
+                <table class="line-items-table">
+                  <thead>
+                    <tr>
+                      <th>Description</th>
+                      <th style="text-align: right;">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody id="resLineItemsBody">
+                    <tr><td>Item</td><td style="text-align: right;">$0.00</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Local Inference Benchmark -->
+            <div class="benchmark-strip">
+              <div>
+                <span>Engine: </span><strong id="resBenchmarkEngine" style="color: #34d399;">Ollama (llama3.2:latest)</strong>
+              </div>
+              <div>
+                <span>Latency: </span><strong id="resBenchmarkLatency">0ms</strong>
+              </div>
+              <div>
+                <span>Cloud Cost: </span><strong style="color: #34d399;">$0.0000</strong>
+              </div>
+            </div>
+
+            <!-- Commit to Ledger button -->
+            <div style="display: flex; gap: 0.75rem;">
+              <button id="btnSaveToLedger" class="btn btn-primary" style="flex: 1; padding: 0.75rem;">
+                💾 Save Record to Audited Ledger
+              </button>
+              <button id="btnViewJSON" class="btn btn-secondary" title="View Raw JSON Schema">
+                { } JSON
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 2: Audited Ledger & Tax Schedule -->
+    <div class="tab-content" id="tabLedger">
+      <div class="glass-panel" style="padding: 1.75rem;">
+        
+        <div class="ledger-controls">
+          <div>
+            <h2 class="section-title">Audited Financial Ledger</h2>
+            <p class="section-desc">Search, filter, and export all client invoices and business expenses for IRS Schedule C.</p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+            <input type="text" id="ledgerSearchInput" class="search-input" placeholder="Search by vendor, category, or amount...">
+            <select id="filterCategory" class="select-input">
+              <option value="ALL">All Categories</option>
+              <option value="Client Invoicing">Client Invoicing (Income)</option>
+              <option value="Software & Cloud">Software & Cloud</option>
+              <option value="Equipment & Hardware">Equipment & Hardware</option>
+              <option value="Meals & Entertainment">Meals & Entertainment</option>
+              <option value="Subcontractors">Subcontractors</option>
+            </select>
+            <select id="filterStatus" class="select-input">
+              <option value="ALL">All Statuses</option>
+              <option value="Deductible">Deductible</option>
+              <option value="Paid">Paid</option>
+              <option value="Overdue">Overdue</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Vendor / Client</th>
+                <th>Invoice #</th>
+                <th>Date</th>
+                <th>Category</th>
+                <th>Tax Deductible</th>
+                <th>Total Amount</th>
+                <th>Status</th>
+                <th style="text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="ledgerTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 3: Client Invoices & AI Payment Chaser -->
+    <div class="tab-content" id="tabChaser">
+      <div class="glass-panel" style="padding: 1.75rem;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h2 class="section-title">Client Invoicing & Accounts Receivable</h2>
+            <p class="section-desc">
+              Track client deliverables and let local Llama 3.2 draft custom follow-up emails for overdue balances with zero cloud token charges.
+            </p>
+          </div>
+          <button id="btnNewInvoiceModal" class="btn btn-outline-emerald">
+            ➕ Create Client Invoice
+          </button>
+        </div>
+
+        <!-- Overdue Alert Banner -->
+        <div id="overdueAlertBanner" style="background: rgba(244, 63, 94, 0.1); border: 1px solid rgba(244, 63, 94, 0.3); border-radius: var(--radius-md); padding: 1.25rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="font-size: 2rem;">⚠️</div>
+            <div>
+              <div style="font-weight: 700; color: #fecdd3; font-size: 1rem;">
+                Attention: 1 Overdue Client Invoice Requires Action
+              </div>
+              <div style="font-size: 0.85rem; color: #fda4af;">
+                <strong>Apex Fintech Labs</strong> is 13 days past Net-15 term for <strong>$3,850.00</strong>.
+              </div>
+            </div>
+          </div>
+          <button id="btnTriggerChaser" class="btn btn-primary" style="background: linear-gradient(135deg, #f43f5e, #e11d48);">
+            ⚡ Draft AI Payment Chaser
+          </button>
+        </div>
+
+        <!-- Invoices List -->
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Client Name</th>
+                <th>Invoice #</th>
+                <th>Issue Date</th>
+                <th>Due Date</th>
+                <th>Deliverables</th>
+                <th>Amount</th>
+                <th>Payment Status</th>
+                <th style="text-align: right;">AI Action</th>
+              </tr>
+            </thead>
+            <tbody id="clientInvoicesTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 4: AI Tax Consultant & Audit Shield -->
+    <div class="tab-content" id="tabTaxAudit">
+      <div class="glass-panel" style="padding: 1.75rem;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h2 class="section-title">AI Tax Consultant & Audit Shield</h2>
+            <p class="section-desc">
+              IRS Schedule C compliance auditor powered by local open weights. Keeps your financial books clean and audit-ready.
+            </p>
+          </div>
+          <button id="btnRunTaxAudit" class="btn btn-primary">
+            🛡️ Run Local Tax Audit
+          </button>
+        </div>
+
+        <div id="taxAuditResultsGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+          
+          <!-- Card 1: Audit Risk Assessment -->
+          <div class="glass-panel" style="padding: 1.5rem; background: rgba(0,0,0,0.3);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+              <span class="metric-title">Audit Risk Rating</span>
+              <span id="auditRiskBadge" class="status-badge status-paid" style="font-size: 0.85rem; padding: 0.3rem 0.8rem;">
+                🟢 LOW RISK
+              </span>
+            </div>
+            <p id="auditRiskExplanation" style="font-size: 0.9rem; color: #cbd5e1; margin-bottom: 1.25rem; line-height: 1.5;">
+              Your current expense-to-income ratio is healthy (~45%). All major hardware deductions qualify for Section 179 immediate expensing.
+            </p>
+            <div class="detail-box">
+              <label>Estimated Self-Employment Tax Deduction</label>
+              <div class="val" id="auditEstimatedSavings" style="color: #34d399; font-size: 1.35rem;">$1,083.88</div>
+            </div>
+          </div>
+
+          <!-- Card 2: Strategic Deductions & Tips -->
+          <div class="glass-panel" style="padding: 1.5rem; background: rgba(0,0,0,0.3);">
+            <div style="font-weight: 700; font-size: 1.05rem; margin-bottom: 0.85rem; color: #38bdf8; display: flex; align-items: center; gap: 0.5rem;">
+              <span>💡</span> Strategic Write-Off Opportunities
+            </div>
+            <ul id="taxTipsList" style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.875rem; color: #cbd5e1;">
+              <li>• <strong>Section 179 Hardware:</strong> 100% first-year deduction applied for computing equipment.</li>
+              <li>• <strong>50% Meals Limit:</strong> Verified client meals are discounted by 50% per current IRS rules.</li>
+              <li>• <strong>Home Office Deduction:</strong> Eligible for simplified $5/sq ft workspace deduction up to 300 sq ft ($1,500).</li>
+            </ul>
+          </div>
+
+          <!-- Card 3: IRS Substantiation Checklist -->
+          <div class="glass-panel" style="padding: 1.5rem; background: rgba(0,0,0,0.3);">
+            <div style="font-weight: 700; font-size: 1.05rem; margin-bottom: 0.85rem; color: #a78bfa; display: flex; align-items: center; gap: 0.5rem;">
+              <span>📑</span> Compliance & Retention Checklist
+            </div>
+            <ul id="complianceChecklist" style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.875rem; color: #cbd5e1;">
+              <li>✅ Retain digital receipt records for any single expense over $75 for 3 years.</li>
+              <li>✅ File Form 1099-NEC for subcontractor Alex Rivera ($1,200 > $600 threshold).</li>
+              <li>✅ Ensure client business purpose is recorded on all restaurant receipts.</li>
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 5: Why Open-Source AI Matters -->
+    <div class="tab-content" id="tabOpenSource">
+      <div class="glass-panel" style="padding: 2rem;">
+        
+        <div style="max-width: 900px; margin: 0 auto;">
+          <div style="text-align: center; margin-bottom: 2.5rem;">
+            <div class="badge-tag" style="margin-bottom: 0.75rem; display: inline-block;">Challenge Theme: Side Hustle</div>
+            <h2 style="font-size: 2rem; margin-bottom: 0.5rem;">Why Open-Source AI is the Ultimate Freelance Superpower</h2>
+            <p style="color: var(--text-muted); font-size: 1rem;">
+              Commercial closed APIs vs. Local Open-Weights: Why a real freelancer would choose and pay for VaultLedger AI.
+            </p>
+          </div>
+
+          <!-- Comparison Grid -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2.5rem;">
+            
+            <!-- Cloud LLM API (Closed) -->
+            <div class="glass-panel" style="padding: 1.5rem; border-color: rgba(244, 63, 94, 0.3); background: rgba(244, 63, 94, 0.04);">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                <h3 style="color: #fb7185; font-size: 1.15rem;">Closed Cloud APIs (OpenAI / Claude)</h3>
+                <span style="font-size: 1.4rem;">❌</span>
+              </div>
+              <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.875rem; color: #cbd5e1;">
+                <li>🔴 <strong>Confidential Data Leaked:</strong> Client names, rates, and bank accounts are sent across public networks and logged on 3rd-party servers. Violates client NDAs!</li>
+                <li>🔴 <strong>Recurring Token Toll:</strong> 150 invoices/month + tax audits cost $30-$50/month in API or SaaS fees ($600/year).</li>
+                <li>🔴 <strong>Zero Offline Support:</strong> Fails completely on airplanes, trains, or coffee shops without Wi-Fi.</li>
+                <li>🔴 <strong>Vendor Lock-in & Pricing Hikes:</strong> Subject to sudden price changes, quota limits, and unexpected downtime.</li>
+              </ul>
+            </div>
+
+            <!-- VaultLedger Local Open-Weights -->
+            <div class="glass-panel" style="padding: 1.5rem; border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.05);">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                <h3 style="color: #34d399; font-size: 1.15rem;">VaultLedger AI (Local Llama 3.2)</h3>
+                <span style="font-size: 1.4rem;">✅</span>
+              </div>
+              <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.875rem; color: #cbd5e1;">
+                <li>🟢 <strong>100% Air-Gapped Privacy:</strong> Zero bytes leave your machine. Perfect compliance with Fortune 500 client NDAs and GDPR.</li>
+                <li>🟢 <strong>$0.00 Marginal Cost:</strong> Run 10 or 10,000 invoices a day completely free forever. Keeps 100% of freelance margins intact.</li>
+                <li>🟢 <strong>True Offline Portability:</strong> Process receipts mid-flight or at remote retreats without an internet connection.</li>
+                <li>🟢 <strong>Total Freedom to Swap Models:</strong> Seamlessly switch between Llama 3.2, Mistral, Gemma 2, or fine-tuned tax models with zero friction.</li>
+              </ul>
+            </div>
+
+          </div>
+
+          <!-- Interactive Freelance ROI Calculator -->
+          <div class="glass-panel" style="padding: 1.75rem; background: rgba(0,0,0,0.3); margin-bottom: 2rem;">
+            <h3 style="font-size: 1.15rem; margin-bottom: 1rem; color: #f8fafc; display: flex; align-items: center; gap: 0.5rem;">
+              <span>🧮</span> Freelance Annual Savings Calculator
+            </h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: center;">
+              <div>
+                <label for="sliderInvoices" style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+                  Monthly Invoices & Receipts Processed: <strong id="calcDocsCount" style="color: #34d399;">120 docs/mo</strong>
+                </label>
+                <input type="range" id="sliderInvoices" min="20" max="500" value="120" step="10" style="width: 100%; accent-color: var(--accent-emerald);">
+              </div>
+              <div style="text-align: right; background: rgba(16, 185, 129, 0.08); padding: 1rem; border-radius: var(--radius-md); border: 1px solid rgba(16, 185, 129, 0.2);">
+                <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Annual SaaS / API Savings</div>
+                <div id="calcAnnualSavings" style="font-family: 'Outfit'; font-size: 2rem; font-weight: 700; color: #34d399;">
+                  $432.00 / year
+                </div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">
+                  + Invaluable client confidentiality protection
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- AI Payment Chaser Drawer / Modal -->
+  <div class="modal-overlay" id="chaserModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h3 style="font-size: 1.25rem;">⚡ AI Payment Chaser</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">
+            Draft a tailored follow-up email with local Llama 3.2.
+          </p>
+        </div>
+        <button class="close-btn" id="btnCloseChaserModal">&times;</button>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="detail-box">
+          <label>Target Client</label>
+          <div class="val" id="chaserClientName">Apex Fintech Labs</div>
+        </div>
+        <div class="detail-box">
+          <label>Amount Due & Days Overdue</label>
+          <div class="val" id="chaserAmountDays" style="color: #fb7185;">$3,850.00 (13 days)</div>
+        </div>
+      </div>
+
+      <div>
+        <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.4rem;">
+          Select Communication Tone:
+        </label>
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="preset-chip active" id="toneGentle" data-tone="gentle">
+            🟢 Gentle Reminder
+          </button>
+          <button class="preset-chip" id="toneFormal" data-tone="formal">
+            🟡 Professional Follow-up
+          </button>
+          <button class="preset-chip" id="toneFirm" data-tone="firm">
+            🔴 Firm Final Notice
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+          <label for="chaserSubject" style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--text-dim);">
+            Subject Line
+          </label>
+          <span style="font-size: 0.7rem; color: #34d399;" id="chaserInferenceTime">Generated by Llama 3.2</span>
+        </div>
+        <input type="text" id="chaserSubject" class="select-input" style="width: 100%;" readonly>
+      </div>
+
+      <div>
+        <label for="chaserBody" style="display: block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.35rem;">
+          Email Body
+        </label>
+        <textarea id="chaserBody" class="doc-textarea" style="height: 180px; font-family: inherit; font-size: 0.875rem;"></textarea>
+      </div>
+
+      <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+        <button id="btnRegenerateChaser" class="btn btn-secondary">
+          🔄 Regenerate
+        </button>
+        <button id="btnCopyChaser" class="btn btn-primary">
+          📋 Copy Email to Clipboard
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Raw JSON Inspector Modal -->
+  <div class="modal-overlay" id="jsonModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 style="font-size: 1.2rem;">Structured JSON Output (IRS Compliant)</h3>
+        <button class="close-btn" id="btnCloseJsonModal">&times;</button>
+      </div>
+      <pre id="jsonPreviewContent" style="background: rgba(0,0,0,0.5); padding: 1rem; border-radius: var(--radius-sm); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; overflow-x: auto; color: #34d399;"></pre>
+      <div style="display: flex; justify-content: flex-end;">
+        <button class="btn btn-secondary" id="btnCopyJSON">Copy JSON</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="appToast">
+    <span id="toastIcon">✅</span>
+    <span id="toastMessage">Action completed successfully!</span>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
