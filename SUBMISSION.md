@@ -42,6 +42,9 @@ Freelancers would gladly pay a **$49–$79 one-time license** (or $9/month self-
 
 ## 🎥 Demo
 
+- **GitHub Repository**: [https://github.com/624183-NITAP/VaultLedger-AI](https://github.com/624183-NITAP/VaultLedger-AI)
+- **Local Application URL**: `http://localhost:3000`
+
 VaultLedger AI features a dark glassmorphic interface with an emerald security aesthetic:
 
 ### 1. Real-Time Air-Gapped Dashboard & KPIs
@@ -72,6 +75,10 @@ An interactive slider that demonstrates how much money a freelancer saves by swi
 ---
 
 ## 💻 Code
+
+{% github 624183-NITAP/VaultLedger-AI %}
+
+> 📂 **Full Source Code**: [https://github.com/624183-NITAP/VaultLedger-AI](https://github.com/624183-NITAP/VaultLedger-AI)
 
 The project is structured with a local Node.js Express backend mediating communication with Ollama, and a lightweight Vanilla HTML/CSS/JS frontend.
 
